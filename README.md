@@ -3,7 +3,7 @@ PulseTick is a free, open source, independently developed application dedicated 
 
 This application is not affiliated with, endorsed by, or directly associated with PulseChain or any of its services. The data provided in this app is sourced directly from publicly available APIs, and is presented for informational purposes only.
 
-I'm dedicated to maintaining and updating this app to ensure it provides the most accurate and up-to-date information possible. 
+I'm dedicated to maintaining and updating this app to ensure it provides the most accurate and up-to-date information possible. The app runs out of a single content view window and reads the token images from the assets folder.
 
 Enjoy using PulseTick!
 
