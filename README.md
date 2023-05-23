@@ -15,3 +15,6 @@ Please send feedback and feature requests to pulsetick@gmail(dot)com
 Feature: Choose API - Allow you to pick where the token values are pulled from.
 
 Feature: Remember my bag - Allow you to save the amounts you own of each token. Will display the current and total value.
+
+# Buy Me A Coffee
+If you want to buy me a coffee and help support development, my Pulse Wallet is 0x6387Fa88E71c16Bf4fc7DA3c03075D211A1FbEc2
