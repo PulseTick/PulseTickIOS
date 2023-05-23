@@ -13,4 +13,5 @@ Please send feedback and feature requests to pulsetick@gmail(dot)com
 
 # Roadmap
 Feature: Choose API - Allow you to pick where the token values are pulled from.
+
 Feature: Remember my bag - Allow you to save the amounts you own of each token. Will display the current and total value.
