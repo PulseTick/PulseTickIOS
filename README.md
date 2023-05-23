@@ -10,4 +10,5 @@ Enjoy using PulseTick!
 
 # FAQ
 What is the difference between the PRO and FREE version?
+
 Absolutely nothing. If you buy the PRO version you help support future development and me. I refuse to collect any data or display ads on either version. 
