@@ -16,6 +16,8 @@ Feature: Choose API - Allow you to pick where the token values are pulled from.
 Feature: Remember my bag - Allow you to save the amounts you own of each token. Will display the current and total value.
 
 # Buy Me A Coffee
-If you want to buy me a coffee and help support development, my Pulse Wallet is 0x6387Fa88E71c16Bf4fc7DA3c03075D211A1FbEc2
+If you want to buy me a coffee, my Pulse Wallet is 0x6387Fa88E71c16Bf4fc7DA3c03075D211A1FbEc2
+
+This is for coffee only. As per the App Store T&Cs it is not a requirement nor expected. 
 
 Thank You!
