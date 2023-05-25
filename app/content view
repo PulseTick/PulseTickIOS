@@ -64,7 +64,7 @@ struct ContentView: View {
                 
                 Spacer() // Pushes the link to the bottom
                 
-                Link("About/Feedback/Buy Me Coffee", destination: URL(string: "https://github.com/PulseTick/PulseTickIOS")!)
+                Link("About/Feedback", destination: URL(string: "https://github.com/PulseTick/PulseTickIOS")!)
                     .padding(.bottom, 10)
             }
             .padding(.top)
