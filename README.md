@@ -12,7 +12,9 @@ Please send feedback and feature requests to pulsetick@gmail(dot)com
 
 # Roadmap
 DONE - Feature: Track My Bag - Allow you to input your tokens and track the value.
+
 Feature: Choose API - Allow you to pick where the token values are pulled from.
+
 Feature: Current trading fee (gas)
 
 # Thanks
