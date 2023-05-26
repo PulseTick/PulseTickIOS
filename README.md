@@ -13,12 +13,16 @@ Please send feedback and feature requests to pulsetick@gmail(dot)com
 # Roadmap
 DONE - Feature: Track My Bag - Allow you to input your tokens and track the value.
 
+DONE - Feature: Current trading fee (gas)
+
 Feature: Choose API - Allow you to pick where the token values are pulled from.
 
-Feature: Current trading fee (gas)
+
 
 # Thanks
 Feature Request: Track my Bag - Sean
+
+Feature Request: Gas Fees - PulseDev group
 
 # Buy Me A Coffee
 If you want to buy me a coffee, my Pulse Wallet is 0x6387Fa88E71c16Bf4fc7DA3c03075D211A1FbEc2
