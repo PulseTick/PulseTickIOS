@@ -1,5 +1,5 @@
 # PulseTick IOS App
-PulseTick is a free, open source, independently developed application dedicated to providing real-time data from PulseChain. My mission is to offer users an easy and intuitive way to track PulseChain token prices. The app requires no permissions and does not require an account or wallet connection. 
+PulseTick is a free, open source, independently developed application dedicated to providing real-time data from PulseChain. My mission is to offer users an easy and intuitive way to track their PulseChain token prices. The app requires no permissions and does not require an account or wallet connection. 
 
 This application is not affiliated with, endorsed by, or directly associated with PulseChain or any of its services. The data provided in this app is sourced directly from publicly available APIs, and is presented for informational purposes only.
 
@@ -11,9 +11,12 @@ Enjoy using PulseTick!
 Please send feedback and feature requests to pulsetick@gmail(dot)com
 
 # Roadmap
+DONE - Feature: Track My Bag - Allow you to input your tokens and track the value.
 Feature: Choose API - Allow you to pick where the token values are pulled from.
+Feature: Current trading fee (gas)
 
-Feature: Remember my bag - Allow you to save the amounts you own of each token. Will display the current and total value.
+# Thanks
+Feature Request: Track my Bag - Sean
 
 # Buy Me A Coffee
 If you want to buy me a coffee, my Pulse Wallet is 0x6387Fa88E71c16Bf4fc7DA3c03075D211A1FbEc2
