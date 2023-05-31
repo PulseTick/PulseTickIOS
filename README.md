@@ -1,32 +1,32 @@
-# PulseTick IOS App
-PulseTick is a free, open source, independently developed application dedicated to providing real-time data from PulseChain. My mission is to offer users an easy and intuitive way to track their PulseChain token prices. The app requires no permissions and does not require an account or wallet connection. 
+# PLSburn iOS App (Formerly PulseTick)
+The PLSburn iOS App, officially recognized by PLSburn.com, is a free, open-source tool designed to provide real-time data from PulseChain. Our mission is to facilitate users with a simple and intuitive way to track PulseChain token prices. The app operates without requiring permissions, account creation, or wallet connection, ensuring an effortless and private user experience.
 
-This application is not affiliated with, endorsed by, or directly associated with PulseChain or any of its services. The data provided in this app is sourced directly from publicly available APIs, and is presented for informational purposes only.
+I am devoted to maintaining and enhancing this app to ensure it offers the most accurate and current information possible.
 
-I'm dedicated to maintaining and updating this app to ensure it provides the most accurate and up-to-date information possible. The app runs out of a single content view window and reads the token images from the assets folder.
-
-Enjoy using PulseTick!
+Enjoy using the PLSburn App!
 
 # Feedback / Feature Requests
 Please send feedback and feature requests to pulsetick@gmail(dot)com
 
 # Roadmap
+
 DONE - Feature: Track My Bag - Allow you to input your tokens and track the value.
+
+DONE - Feature: Track My Bag (via public wallet) - Complete using RPC calls. 
 
 DONE - Feature: Current trading fee (gas)
 
-Feature: Choose API - Allow you to pick where the token values are pulled from.
-
-
-
 # Thanks
-Feature Request: Track my Bag - Sean
+Feature Request: Track my Bag - Thanks, Sean
 
-Feature Request: Gas Fees - PulseDev group
+Feature Request: Gas Fees - Thanks, PulseDev group
 
 # Buy Me A Coffee
 If you want to buy me a coffee, my Pulse Wallet is 0x6387Fa88E71c16Bf4fc7DA3c03075D211A1FbEc2
 
 This is for coffee only. As per the App Store T&Cs it is not a requirement nor expected. 
+
+# Stay Connected
+Keep yourself updated by following me on Twitter: https://twitter.com/AdamAdapter
 
 Thank You!
