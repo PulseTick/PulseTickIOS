@@ -1,122 +1,249 @@
 import SwiftUI
+import SafariServices
+import Foundation
 
-struct ContentView: View {
-    @State private var tokens: [Token] = []
-    @State private var timer = Timer.publish(every: 30.0, on: .main, in: .common).autoconnect()
-    @State private var lastRefreshTime: String = ""
-    let orderedTokenSymbols = ["PLS", "PLSX", "INC", "HEX"]
-
-    struct Token: Identifiable {
-        let id = UUID()
-        let name: String
-        let priceUSD: Double
-    }
-
-    struct APIResponse: Codable {
-        let tokens: [String: TokenDetails]
-
-        struct TokenDetails: Codable {
-            let priceUSD: Double
-        }
-    }
-
+struct TokenRowView: View {
+    let tokenSymbol: String
+    let tokenPrice: Double?
+    
     var body: some View {
-        NavigationView {
-            VStack {
-                Text("PulseChain Ticker v2")
-                    .font(.title2)
-                    .fontWeight(.semibold)
-                    .padding(.bottom, 10)
-                
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Refresh Interval: 30s")
-                            .font(.footnote)
-                        Text("Last refresh: \(lastRefreshTime)")
-                            .font(.footnote)
-                    }
-                    .padding(.leading, 20)
-                    
-                    Spacer()
-                    
-                    Button(action: {
-                        fetchData()
-                    }) {
-                        Label("Refresh Now", systemImage: "arrow.clockwise.circle.fill")
-                            .font(.footnote)
-                            .foregroundColor(.blue)
-                    }
-                    .padding(.trailing, 20)
-                }
-                .padding(.bottom, 10)
-                
-                List(tokens) { token in
-                    HStack {
-                        Image(token.name) // Use the token name to load the image
-                            .resizable()
-                            .frame(width: 40, height: 40)
-                        VStack(alignment: .leading) {
-                            Text(token.name)
-                            Text(String(format: "$%.6f", token.priceUSD))
-                        }
-                    }
-                }
-                
-                Spacer() // Pushes the link to the bottom
-                
-                Link("About/Feedback", destination: URL(string: "https://github.com/PulseTick/PulseTickIOS")!)
-                    .padding(.bottom, 10)
+        HStack {
+            Text(tokenSymbol)
+                .font(.headline)
+            Spacer()
+            if let tokenPrice = tokenPrice {
+                Text("$\(formattedTokenPrice(tokenPrice))")
+                    .foregroundColor(.green)
+            } else {
+                Text("No price")
             }
-            .padding(.top)
-        }
-        .onAppear {
-            fetchData()
-        }
-        .onReceive(timer) { _ in
-            fetchData()
         }
     }
-
-    func fetchData() {
-        guard let url = URL(string: "https://plsburn.com/api") else {
-            return
+    
+    private func formattedTokenPrice(_ price: Double) -> String {
+        if price >= 0.01 {
+            return String(format: "%.3f", price)
+        } else {
+            return String(format: "%.6f", price)
         }
-
-        URLSession.shared.dataTask(with: url) { data, response, error in
-            if let error = error {
-                print("Error: \(error.localizedDescription)")
-                return
-            }
-
-            guard let data = data else {
-                print("No data received")
-                return
-            }
-
-            print(String(data: data, encoding: .utf8) ?? "")
-
-            do {
-                let decoder = JSONDecoder()
-                let decodedData = try decoder.decode(APIResponse.self, from: data)
-                DispatchQueue.main.async {
-                    self.tokens = orderedTokenSymbols.compactMap { symbol in
-                        if let details = decodedData.tokens[symbol] {
-                            return Token(name: symbol, priceUSD: details.priceUSD)
-                        } else {
-                            return nil
-                        }
-                    }
-                    self.lastRefreshTime = DateFormatter.localizedString(from: Date(), dateStyle: .none, timeStyle: .short)
-                }
-            } catch {
-                print("Error decoding JSON: \(error.localizedDescription)")
-            }
-        }.resume()
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
+struct UserTokenRowView: View {
+    let tokenSymbol: String
+    let tokenBalance: String
+    let tokenPrice: Double?
+    
+    var tokenValue: Double? {
+        if let tokenPrice = tokenPrice, let balance = Double(tokenBalance) {
+            return tokenPrice * balance
+        }
+        return nil
+    }
+    
+    var formattedTokenValue: String {
+        if let tokenValue = tokenValue {
+            return String(format: "%.2f", tokenValue)
+        }
+        return tokenBalance
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 2) {
+            HStack {
+                Text(tokenSymbol)
+                    .font(.headline)
+                Spacer()
+                if let tokenValue = tokenValue {
+                    Text("$\(formattedTokenValue)")
+                        .font(.system(size: fontSize(for: formattedTokenValue)))
+                        .foregroundColor(tokenPrice != nil ? .green : .gray)
+                } else {
+                    Text(tokenBalance)
+                        .font(.system(size: fontSize(for: tokenBalance)))
+                        .foregroundColor(.gray)
+                }
+            }
+            if tokenPrice == nil && tokenSymbol != "Beat" {
+                Text("No price data")
+                    .font(.system(size: 10))
+                    .foregroundColor(.red)
+            }
+        }
+    }
+    
+    func fontSize(for balance: String) -> CGFloat {
+        guard let balanceValue = Double(balance) else {
+            return 16.0
+        }
+        
+        let scaleFactor = min(1.0, 1000 / balanceValue)
+        
+        let baseFontSize: CGFloat = 12.0
+        let maximumFontSize: CGFloat = 15.0
+        
+        let scaledFontSize = baseFontSize + (maximumFontSize - baseFontSize) * scaleFactor
+        
+        return scaledFontSize
+    }
+}
+
+struct HomeView: View {
+    @State private var tokenData = [String: Double]()
+    @State private var isExpandedTokens: Bool = true
+    @State private var isExpandedUserTokens: Bool = true
+    @State private var isExpandedGas: Bool = true
+    @State private var userTokens = [String: [String: String]]()
+    @State private var gasData: APIResponse.GasData?
+    @State private var combinedUserTokens = [[String: String]]()
+    @State private var timer: Timer?
+
+    var hasUserWallet: Bool {
+        if let userPublicWallet = UserDefaults.standard.string(forKey: "UserPublicWallet"), !userPublicWallet.isEmpty {
+            return true
+        }
+        return false
+    }
+
+    var body: some View {
+        VStack {
+            Text("PLSburn.com Mobile")
+                .font(.title)
+                .padding(.vertical, 8)
+
+            List {
+                DisclosureGroup(
+                    isExpanded: $isExpandedTokens,
+                    content: {
+                        ForEach(tokenData.sorted(by: { (token1, token2) -> Bool in
+                            let tokenOrder: [String] = ["PLS", "PLSX", "HEX", "INC"]
+                            guard let index1 = tokenOrder.firstIndex(of: token1.key),
+                                  let index2 = tokenOrder.firstIndex(of: token2.key) else {
+                                return token1.key < token2.key
+                            }
+                            return index1 < index2
+                        }), id: \.key) { (key, value) in
+                            TokenRowView(tokenSymbol: key, tokenPrice: value)
+                        }
+                        .padding(.vertical, 4)
+                    }
+                ) {
+                    Text("PulseChain Native")
+                        .font(.headline)
+                        .foregroundColor(.gray)
+                        .padding(.vertical, 8)
+                }
+
+                Section(header: Text("")) {
+                    DisclosureGroup(
+                        isExpanded: $isExpandedGas,
+                        content: {
+                            if let gasData = gasData {
+                                UserTokenRowView(tokenSymbol: "Beat", tokenBalance: "\(gasData.beat)", tokenPrice: nil)
+                            } else {
+                                Text("Gas data unavailable")
+                                    .font(.system(size: 12))
+                                    .foregroundColor(.red)
+                            }
+                        }
+                    ) {
+                        Text("PulseChain Fees")
+                            .font(.headline)
+                            .foregroundColor(.gray)
+                            .padding(.vertical, 8)
+                    }
+                }
+
+                Section(header: Text("")) {
+                    DisclosureGroup(
+                        isExpanded: $isExpandedUserTokens,
+                        content: {
+                            if hasUserWallet {
+                                if !combinedUserTokens.isEmpty {
+                                    ForEach(combinedUserTokens.indices, id: \.self) { index in
+                                        let tokenDetails = combinedUserTokens[index]
+                                        if let symbol = tokenDetails["symbol"], let balance = tokenDetails["balance"], let price = tokenData[symbol] {
+                                            UserTokenRowView(tokenSymbol: symbol, tokenBalance: balance, tokenPrice: price)
+                                        } else if let symbol = tokenDetails["symbol"], let balance = tokenDetails["balance"] {
+                                            UserTokenRowView(tokenSymbol: symbol, tokenBalance: balance, tokenPrice: nil)
+                                        }
+                                    }
+                                    .onDelete(perform: { indexSet in
+                                        deleteBag(userTokens: &userTokens, combinedUserTokens: &combinedUserTokens, at: indexSet)
+                                    })
+                                } else {
+                                    Text("No user tokens found")
+                                }
+                            } else {
+                                Text("No user wallet found")
+                            }
+                        }
+                    ) {
+                        Text("My Bag")
+                            .font(.headline)
+                            .foregroundColor(.gray)
+                    }
+                }
+            }
+        }
+        .onAppear {
+            NotificationCenter.default.addObserver(forName: NSNotification.Name("WalletAddressUpdated"), object: nil, queue: .main) { _ in
+                if let savedUserTokens = UserDefaults.standard.dictionary(forKey: "TokenDetails") as? [String: [String: String]] {
+                    self.userTokens = savedUserTokens
+                }
+
+                updateCombinedUserTokens(userTokens: userTokens, combinedUserTokens: &combinedUserTokens)
+
+                func_plsburnapi.fetchTokenPrices { tokenData, gasData in
+                    if let tokenData = tokenData {
+                        DispatchQueue.main.async {
+                            self.tokenData = tokenData
+                        }
+                    }
+                    if let gasData = gasData {
+                        DispatchQueue.main.async {
+                            self.gasData = gasData
+                        }
+                    }
+                }
+            }
+
+            if let savedUserTokens = UserDefaults.standard.dictionary(forKey: "TokenDetails") as? [String: [String: String]] {
+                self.userTokens = savedUserTokens
+            }
+
+            updateCombinedUserTokens(userTokens: userTokens, combinedUserTokens: &combinedUserTokens)
+
+            func_plsburnapi.fetchTokenPrices { tokenData, gasData in
+                if let tokenData = tokenData {
+                    DispatchQueue.main.async {
+                        self.tokenData = tokenData
+                    }
+                }
+                if let gasData = gasData {
+                    DispatchQueue.main.async {
+                        self.gasData = gasData
+                    }
+                }
+            }
+
+            timer = Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
+                func_plsburnapi.fetchTokenPrices { tokenData, gasData in
+                    if let tokenData = tokenData {
+                        DispatchQueue.main.async {
+                            self.tokenData = tokenData
+                        }
+                    }
+                    if let gasData = gasData {
+                        DispatchQueue.main.async {
+                            self.gasData = gasData
+                        }
+                    }
+                }
+            }
+        }
+        .onDisappear {
+            timer?.invalidate()
+        }
     }
 }
