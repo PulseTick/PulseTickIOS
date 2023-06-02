@@ -9,6 +9,13 @@ Enjoy using the PLSburn App!
 Please send feedback and feature requests to pulsetick@gmail(dot)com
 
 # Roadmap
+Feature: iOS ticker widget for the Home screen. 
+
+Feature: Allow for multiple wallet tracking.
+
+Feature: Track staked tokens.
+
+Feature: Pull all token USD values directly from a DEX.
 
 DONE - Feature: Track My Bag - Allow you to input your tokens and track the value.
 
