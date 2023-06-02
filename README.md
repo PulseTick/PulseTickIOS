@@ -9,6 +9,8 @@ Enjoy using the PLSburn App!
 Please send feedback and feature requests to pulsetick@gmail(dot)com
 
 # Roadmap
+Feature/Fix: Add eHEX tracking.
+
 Feature: iOS ticker widget for the Home screen. 
 
 Feature: Allow for multiple wallet tracking.
